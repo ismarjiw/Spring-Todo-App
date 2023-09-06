@@ -69,4 +69,14 @@ public class TodoService {
             throw new EntityNotFoundException("Todo with ID " + todoId + " does not exist.");
         }
     }
+    public Todo getTodoById(Long todoId) {
+        Optional<Todo> todoOptional = todoRepository.findById(todoId);
+
+        if (todoOptional.isPresent()) {
+            return todoOptional.get(); // Return the Todo if found
+        } else {
+            // Handle the case where the Todo with the specified ID is not found
+            throw new EntityNotFoundException("Todo with ID " + todoId + " does not exist.");
+        }
+    }
 }
