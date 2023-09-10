@@ -5,7 +5,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,35 +39,32 @@ public class TodoService {
        }
        todoRepository.deleteById(todoId);
     }
-
-    @Transactional
-    public void updateTodo(Long todoId,
-                           String newTitle,
-                           String newDescription,
-                           LocalDate newDueDate,
-                           boolean newCompleted) {
-        Optional<Todo> todoOptional = todoRepository.findById(todoId);
-
-        if (todoOptional.isPresent()) {
-            Todo todoToUpdate = todoOptional.get();
-            if (newTitle != null) {
-                todoToUpdate.setTitle(newTitle);
-            }
-            if (newDescription != null) {
-                todoToUpdate.setDescription(newDescription);
-            }
-            if (newDueDate != null) {
-                todoToUpdate.setDueDate(newDueDate);
-            }
-            boolean currentCompletedStatus = todoToUpdate.isCompleted();
-            if (newCompleted != currentCompletedStatus) {
-                todoToUpdate.setCompleted(!currentCompletedStatus);
-            }
-            todoRepository.save(todoToUpdate);
-        } else {
-            throw new EntityNotFoundException("Todo with ID " + todoId + " does not exist.");
-        }
+@Transactional
+public void updateTodo(Todo updatedTodo) {
+    // Ensure that the updatedTodo has a valid ID
+    Long todoId = updatedTodo.getId();
+    if (todoId == null) {
+        throw new IllegalArgumentException("TODO item must have a valid ID for updating.");
     }
+
+    // Retrieve the existing TODO item from the database by its ID
+    Optional<Todo> existingTodoOptional = todoRepository.findById(todoId);
+
+    if (existingTodoOptional.isPresent()) {
+        // Merge the changes from updatedTodo into the existingTodo
+        Todo existingTodo = existingTodoOptional.get();
+        existingTodo.setTitle(updatedTodo.getTitle());
+        existingTodo.setDescription(updatedTodo.getDescription());
+        existingTodo.setDueDate(updatedTodo.getDueDate());
+        existingTodo.setCompleted(updatedTodo.isCompleted());
+
+        // Save the updated TODO item
+        todoRepository.save(existingTodo);
+    } else {
+        throw new EntityNotFoundException("Todo with ID " + todoId + " does not exist.");
+    }
+}
+
     public Todo getTodoById(Long todoId) {
         Optional<Todo> todoOptional = todoRepository.findById(todoId);
 

@@ -9,32 +9,18 @@
 </head>
 <body>
 
-<!--<div class="container mt-5">-->
-<!--  <div class="row">-->
-<!--    <div class="col-md-6">-->
-<!--      <h1>To-Do List</h1>-->
-<!--      <ul class="list-group">-->
-<!--        <li class="list-group-item" th:each="todo : ${todos}">-->
-<!--          <h5 th:text="${todo.title}"></h5>-->
-<!--          <p th:text="${todo.description}"></p>-->
-<!--          <p><strong>Due Date:</strong> <span th:text="${todo.dueDate}"></span></p>-->
-<!--          <p><strong>Status:</strong> <span th:text="${todo.completed ? 'Completed' : 'Not Completed'}"></span></p>-->
-<!--        </li>-->
-<!--      </ul>-->
-<!--    </div>-->
-
 <div class="container mt-5">
   <div class="row">
     <div class="col-md-6">
       <h1>To-Do List</h1>
       <ul class="list-group">
-        <li class="list-group-item" th:each="todo : ${todos}">
+        <li class="list-group-item" th:each="todo : ${todos}" th:id="'todo-' + ${todo.id}">
           <h5 th:text="${todo.title}"></h5>
           <p th:text="${todo.description}"></p>
           <p><strong>Due Date:</strong> <span th:text="${todo.dueDate}"></span></p>
           <p><strong>Status:</strong> <span th:text="${todo.completed ? 'Completed' : 'Not Completed'}"></span></p>
-          <!-- Add an "Edit" button that links to the edit page -->
-          <a th:href="@{'/update/' + ${todo.id}}" class="btn btn-primary">Edit</a>
+          <a th:href="@{'/api/v1/todo/update/' + ${todo.id}}" class="btn btn-primary">Edit</a>
+          <a th:href="@{'/api/v1/todo/delete/' + ${todo.id}}" class="btn btn-danger delete-button">Delete</a>
         </li>
       </ul>
     </div>
@@ -66,48 +52,27 @@
 
 <!-- Include Bootstrap JS and jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+      $(".delete-button").click(function(event) {
+          event.preventDefault();
+          const deleteUrl = $(this).attr("href");
+          const todoId = $(this).closest("li").attr("id").replace("todo-", "");
+
+          $.ajax({
+              url: deleteUrl,
+              type: "DELETE",
+              success: function() {
+                  // Remove the deleted TODO item from the page
+                  $(`#todo-${todoId}`).remove();
+              },
+              error: function() {
+                  alert("Error deleting TODO item.");
+              }
+          });
+      });
+  });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org" lang="en">-->
-<!--<head>-->
-<!--  <title>To-Do List</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--<h1>To-Do List</h1>-->
-
-<!--<ul>-->
-<!--  <li th:each="todo : ${todos}">-->
-<!--    <span th:text="${todo.title}"></span>-->
-<!--    <b> *** </b>-->
-<!--    <span th:text="${todo.description}"></span>-->
-<!--  </li>-->
-<!--</ul>-->
-
-<!--<form th:action="@{/api/v1/todo/add-todo}" method="post">-->
-<!--  <label for="title">Title:</label>-->
-<!--  <input type="text" id="title" name="title" required><br>-->
-
-<!--  <label for="description">Description:</label>-->
-<!--  <textarea id="description" name="description" required></textarea><br>-->
-
-<!--  <label for="dueDate">Due Date:</label>-->
-<!--  <input type="date" id="dueDate" name="dueDate" required><br>-->
-
-<!--  <label for="completed">Completed:</label>-->
-<!--  <input type="checkbox" id="completed" name="completed"><br>-->
-
-<!--  <button type="submit">Create Todo</button>-->
-<!--</form>-->
-
-<!--</body>-->
-<!--</html>-->

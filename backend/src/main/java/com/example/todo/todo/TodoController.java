@@ -1,8 +1,6 @@
 package com.example.todo.todo;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -31,7 +29,7 @@ public ModelAndView getTodos() {
     return modelAndView;
 }
 
-    @DeleteMapping(path = "{todoId}")
+    @DeleteMapping("/delete/{todoId}")
     public void deleteTodo(
             @PathVariable("todoId") Long todoId) {
         todoService.deleteTodo(todoId);
@@ -42,7 +40,7 @@ public ModelAndView getTodos() {
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("dueDate") String dueDate,
-            @RequestParam("completed") boolean completed
+            @RequestParam(value = "completed", required = false, defaultValue = "false") boolean completed
     ) {
         Todo todo = new Todo();
         todo.setTitle(title);
@@ -54,14 +52,41 @@ public ModelAndView getTodos() {
         return new RedirectView("/api/v1/todo");
     }
 
-    @PutMapping(path = "{todoId}")
-    public void updateTodo(
+    @GetMapping("/update/{todoId}")
+    public ModelAndView showEditForm(@PathVariable("todoId") Long todoId) {
+        Todo todo = todoService.getTodoById(todoId);
+
+        ModelAndView modelAndView = new ModelAndView("editTodo");
+        modelAndView.addObject("todo", todo);
+
+        return modelAndView;
+    }
+
+    @PostMapping("/update/{todoId}")
+    public RedirectView updateTodo(
             @PathVariable("todoId") Long todoId,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String description,
-            @RequestParam(required = false) LocalDate dueDate,
+            @RequestParam(required = false) String dueDate,
             @RequestParam(required = false) boolean completed) {
-        todoService.updateTodo(todoId, title, description, dueDate, completed);
+        // Retrieve the existing TODO item
+        Todo existingTodo = todoService.getTodoById(todoId);
+
+        // Update the fields if provided in the form
+        if (title != null) {
+            existingTodo.setTitle(title);
+        }
+        if (description != null) {
+            existingTodo.setDescription(description);
+        }
+        if (dueDate != null) {
+            existingTodo.setDueDate(LocalDate.parse(dueDate));
+        }
+        existingTodo.setCompleted(completed);
+
+        todoService.updateTodo(existingTodo);
+
+        return new RedirectView("/api/v1/todo");
     }
 
 }
