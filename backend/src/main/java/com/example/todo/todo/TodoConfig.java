@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Configuration
-public class StudentConfig {
+public class TodoConfig {
 
     @Bean
     CommandLineRunner commandLineRunner(TodoRepository repository) {
