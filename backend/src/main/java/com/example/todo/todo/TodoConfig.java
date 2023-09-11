@@ -9,7 +9,6 @@ import java.util.List;
 
 @Configuration
 public class TodoConfig {
-
     @Bean
     CommandLineRunner commandLineRunner(TodoRepository repository) {
         return args -> {

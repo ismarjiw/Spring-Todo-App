@@ -4,11 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>To-Do List</title>
-  <!-- Include Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
+<body>
 <div class="container mt-5">
   <div class="row">
     <div class="col-md-6">
@@ -26,7 +25,7 @@
     </div>
 
     <div class="col-md-6">
-      <h2>Create a New Todo</h2>
+      <h2>Create a New To-do</h2>
       <form th:action="@{/api/v1/todo/add-todo}" method="post">
         <div class="form-group">
           <label for="title">Title:</label>
@@ -50,29 +49,36 @@
   </div>
 </div>
 
-<!-- Include Bootstrap JS and jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  $(document).ready(function() {
-      $(".delete-button").click(function(event) {
-          event.preventDefault();
-          const deleteUrl = $(this).attr("href");
-          const todoId = $(this).closest("li").attr("id").replace("todo-", "");
+  document.addEventListener("DOMContentLoaded", function() {
+    const deleteButtons = document.querySelectorAll(".delete-button");
 
-          $.ajax({
-              url: deleteUrl,
-              type: "DELETE",
-              success: function() {
-                  // Remove the deleted TODO item from the page
-                  $(`#todo-${todoId}`).remove();
-              },
-              error: function() {
-                  alert("Error deleting TODO item.");
-              }
-          });
+    deleteButtons.forEach(function(button) {
+      button.addEventListener("click", function(event) {
+        event.preventDefault();
+        const deleteUrl = this.getAttribute("href");
+        const todoId = this.closest("li").getAttribute("id").replace("todo-", "");
+
+        fetch(deleteUrl, {
+          method: "DELETE"
+        })
+        .then((response) {
+          if (response.ok) {
+            const todoElement = document.getElementById(`todo-${todoId}`);
+            if (todoElement) {
+              todoElement.remove();
+            }
+          } else {
+            throw new Error("Error deleting TODO item.");
+          }
+        })
+        .catch((error) {
+          alert(error.message);
+        });
       });
+    });
   });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
