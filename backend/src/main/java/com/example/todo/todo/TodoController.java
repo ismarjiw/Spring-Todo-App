@@ -19,15 +19,15 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-@GetMapping
-public ModelAndView getTodos() {
-    List<Todo> todos = todoService.getTodos();
+    @GetMapping
+    public ModelAndView getTodos() {
+        List<Todo> todos = todoService.getTodos();
 
-    ModelAndView modelAndView = new ModelAndView("list"); // Specify the Thymeleaf template name here
-    modelAndView.addObject("todos", todos); // Add the list of todos as a model attribute
+        ModelAndView modelAndView = new ModelAndView("list"); // Specify the Thymeleaf template name here
+        modelAndView.addObject("todos", todos); // Add the list of todos as a model attribute
 
-    return modelAndView;
-}
+        return modelAndView;
+    }
 
     @DeleteMapping("/delete/{todoId}")
     public void deleteTodo(
@@ -87,15 +87,6 @@ public ModelAndView getTodos() {
         todoService.updateTodo(existingTodo);
 
         return new RedirectView("/api/v1/todo");
-    }
-
-    @RequestMapping("/error")
-    public String handleError() {
-        return "error"; // This maps to error.html
-    }
-    @GetMapping("/trigger-error")
-    public String triggerError() {
-        throw new RuntimeException("This is a test error");
     }
 
 }
