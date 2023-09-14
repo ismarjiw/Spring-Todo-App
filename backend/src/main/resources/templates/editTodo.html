@@ -12,17 +12,17 @@
   <form th:action="@{'/api/v1/todo/update/' + ${todo.id}}" method="post">
 
     <div class="form-group">
-      <label for="editedTitle">Edited Title:</label>
+      <label for="editedTitle">Title:</label>
       <input type="text" class="form-control" id="editedTitle" name="title" th:value="${todo.title}" required>
     </div>
 
     <div class="form-group">
-      <label for="editedDescription">Edited Description:</label>
+      <label for="editedDescription">Description:</label>
       <textarea class="form-control" id="editedDescription" name="description" required th:text="${todo.description}"></textarea>
     </div>
 
     <div class="form-group">
-      <label for="editedDueDate">Edited Due Date:</label>
+      <label for="editedDueDate">Due Date:</label>
       <input type="date" class="form-control" id="editedDueDate" name="dueDate" th:value="${todo.dueDate}" required>
     </div>
 
