@@ -89,4 +89,13 @@ public ModelAndView getTodos() {
         return new RedirectView("/api/v1/todo");
     }
 
+    @RequestMapping("/error")
+    public String handleError() {
+        return "error"; // This maps to error.html
+    }
+    @GetMapping("/trigger-error")
+    public String triggerError() {
+        throw new RuntimeException("This is a test error");
+    }
+
 }
